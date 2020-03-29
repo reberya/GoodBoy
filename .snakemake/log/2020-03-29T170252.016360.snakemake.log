@@ -1,0 +1,206 @@
+Building DAG of jobs...
+Checking status of 0 jobs.
+Using shell: /usr/bin/bash
+Provided cluster nodes: 4999
+Job counts:
+	count	jobs
+	3	copy
+	3	sleep
+	1	targets
+	7
+Resources before job selection: {'_cores': 9223372036854775807, '_nodes': 4999}
+Ready jobs (3):
+	copy
+	copy
+	copy
+Selected jobs (3):
+	copy
+	copy
+	copy
+Resources after job selection: {'_cores': 9223372036854775804, '_nodes': 4996}
+
+[Sun Mar 29 17:02:52 2020]
+rule copy:
+    input: data/sample_3.txt
+    output: results/sample_3_copy.txt
+    jobid: 5
+    wildcards: sample=3
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "copy", "local": false, "input": ["data/sample_3.txt"], "output": ["results/sample_3_copy.txt"], "wildcards": {"sample": "3"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 5, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "copy.sample=3", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "1:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/copy.sample=3.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_3_copy.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ data/sample_3.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules copy --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/5.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/5.jobfailed"; exit 1)
+
+Submitted job 5 with external jobid 'Submitted batch job 5119893'.
+
+[Sun Mar 29 17:02:52 2020]
+rule copy:
+    input: data/sample_1.txt
+    output: results/sample_1_copy.txt
+    jobid: 4
+    wildcards: sample=1
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "copy", "local": false, "input": ["data/sample_1.txt"], "output": ["results/sample_1_copy.txt"], "wildcards": {"sample": "1"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 4, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "copy.sample=1", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "1:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/copy.sample=1.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_1_copy.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ data/sample_1.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules copy --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/4.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/4.jobfailed"; exit 1)
+
+Submitted job 4 with external jobid 'Submitted batch job 5119894'.
+
+[Sun Mar 29 17:02:52 2020]
+rule copy:
+    input: data/sample_2.txt
+    output: results/sample_2_copy.txt
+    jobid: 6
+    wildcards: sample=2
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "copy", "local": false, "input": ["data/sample_2.txt"], "output": ["results/sample_2_copy.txt"], "wildcards": {"sample": "2"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 6, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "copy.sample=2", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "1:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/copy.sample=2.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_2_copy.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ data/sample_2.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules copy --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/6.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/6.jobfailed"; exit 1)
+
+Submitted job 6 with external jobid 'Submitted batch job 5119895'.
+Checking status of 3 jobs.
+[Sun Mar 29 17:03:02 2020]
+Finished job 5.
+1 of 7 steps (14%) done
+Resources before job selection: {'_cores': 9223372036854775805, '_nodes': 4997}
+Ready jobs (1):
+	sleep
+Selected jobs (1):
+	sleep
+Resources after job selection: {'_cores': 9223372036854775804, '_nodes': 4996}
+
+[Sun Mar 29 17:03:02 2020]
+rule sleep:
+    input: results/sample_3_copy.txt
+    output: results/sample_3_sleep.txt
+    jobid: 2
+    wildcards: sample=3
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "sleep", "local": false, "input": ["results/sample_3_copy.txt"], "output": ["results/sample_3_sleep.txt"], "wildcards": {"sample": "3"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 2, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "sleep.sample=3", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "24:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/sleep.sample=3.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_3_sleep.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ results/sample_3_copy.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules sleep --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/2.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/2.jobfailed"; exit 1)
+
+[Sun Mar 29 17:03:02 2020]
+Finished job 4.
+2 of 7 steps (29%) done
+[Sun Mar 29 17:03:02 2020]
+Finished job 6.
+3 of 7 steps (43%) done
+Submitted job 2 with external jobid 'Submitted batch job 5119896'.
+Resources before job selection: {'_cores': 9223372036854775806, '_nodes': 4998}
+Ready jobs (2):
+	sleep
+	sleep
+Selected jobs (2):
+	sleep
+	sleep
+Resources after job selection: {'_cores': 9223372036854775804, '_nodes': 4996}
+
+[Sun Mar 29 17:03:02 2020]
+rule sleep:
+    input: results/sample_2_copy.txt
+    output: results/sample_2_sleep.txt
+    jobid: 3
+    wildcards: sample=2
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "sleep", "local": false, "input": ["results/sample_2_copy.txt"], "output": ["results/sample_2_sleep.txt"], "wildcards": {"sample": "2"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 3, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "sleep.sample=2", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "24:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/sleep.sample=2.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_2_sleep.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ results/sample_2_copy.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules sleep --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/3.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/3.jobfailed"; exit 1)
+
+Submitted job 3 with external jobid 'Submitted batch job 5119897'.
+
+[Sun Mar 29 17:03:02 2020]
+rule sleep:
+    input: results/sample_1_copy.txt
+    output: results/sample_1_sleep.txt
+    jobid: 1
+    wildcards: sample=1
+
+Jobscript:
+#!/bin/sh
+# properties = {"type": "single", "rule": "sleep", "local": false, "input": ["results/sample_1_copy.txt"], "output": ["results/sample_1_sleep.txt"], "wildcards": {"sample": "1"}, "params": {}, "log": [], "threads": 1, "resources": {}, "jobid": 1, "cluster": {"account_pbs": "your_pbs_account", "account_slurm": "shahy99", "queue": "fluxod", "qos": "flux", "partition": "standard", "jobname": "sleep.sample=1", "nodes": 1, "procs": 1, "pmem": "50MB", "walltime": "24:00:00", "email": "rebernrj@umich.edu", "mailon": "a", "mail_type": "FAIL", "jobout": "oe", "outdir": "log/hpc/", "outfile": "log/hpc/sleep.sample=1.out"}}
+ cd /home/rebernrj/GoodBoy && \
+/home/rebernrj/.conda/envs/smk_env1/bin/python3.6 \
+-m snakemake results/sample_1_sleep.txt --snakefile /home/rebernrj/GoodBoy/code/myworkflow.smk \
+--force -j --keep-target-files --keep-remote \
+--wait-for-files /home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_ results/sample_1_copy.txt --latency-wait 30 \
+ --attempt 1 --force-use-threads \
+--wrapper-prefix https://github.com/snakemake/snakemake-wrappers/raw/ \
+   --allowed-rules sleep --nocolor --notemp --no-hooks --nolock \
+--mode 2  && touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/1.jobfinished" || (touch "/home/rebernrj/GoodBoy/.snakemake/tmp.ydhkyt6_/1.jobfailed"; exit 1)
+
+Submitted job 1 with external jobid 'Submitted batch job 5119898'.
+Checking status of 3 jobs.
+[Sun Mar 29 17:03:12 2020]
+Finished job 2.
+4 of 7 steps (57%) done
+[Sun Mar 29 17:03:12 2020]
+Finished job 3.
+5 of 7 steps (71%) done
+[Sun Mar 29 17:03:12 2020]
+Finished job 1.
+6 of 7 steps (86%) done
+Resources before job selection: {'_cores': 9223372036854775807, '_nodes': 4999}
+Ready jobs (1):
+	targets
+Selected jobs (1):
+	targets
+Resources after job selection: {'_cores': 9223372036854775806, '_nodes': 4998}
+
+[Sun Mar 29 17:03:12 2020]
+localrule targets:
+    input: results/sample_1_sleep.txt, results/sample_3_sleep.txt, results/sample_2_sleep.txt
+    jobid: 0
+
+[Sun Mar 29 17:03:12 2020]
+Finished job 0.
+7 of 7 steps (100%) done
+Complete log: /home/rebernrj/GoodBoy/.snakemake/log/2020-03-29T170252.016360.snakemake.log
+unlocking
+removing lock
+removing lock
+removed all locks
