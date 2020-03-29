@@ -1,2 +1,2 @@
 # GoodBoy
-RNA-seq Analysis
+Quant-seq Analysis Pipeline
