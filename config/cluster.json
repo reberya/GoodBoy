@@ -1,0 +1,22 @@
+{"__default__": {
+    "account_pbs": "your_pbs_account",
+    "account_slurm": "shahy99",
+    "queue": "fluxod",
+	"qos":"flux",
+    "partition": "standard",
+    "jobname": "{rule}.{wildcards}",
+    "nodes": 1,
+    "procs": 1,
+    "pmem": "50MB",
+    "walltime": "1:00:00",
+    "email": "rebernrj@umich.edu",
+    "mailon": "a",
+    "mail_type": "FAIL",
+    "jobout": "oe",
+    "outdir": "log/hpc/",
+    "outfile": "log/hpc/{rule}.{wildcards}.out"
+    },
+"sleep": {
+    "walltime": "24:00:00"
+    }
+}
