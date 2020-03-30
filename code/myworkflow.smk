@@ -64,6 +64,6 @@ rule fastqc:
     output: FQC
     params: time= "01:00:00"
     shell: """ \
-    echo "cat" > fastqc/127811_CGAATACG-TTACCGAC_S1.R1.fastqc.html; \
-    echo "cat" > fastqc/127811_CGAATACG-TTACCGAC_S1.R1.fastqc.html;
+    echo "cat" > output/fastqc/127811_CGAATACG-TTACCGAC_S1.R1.fastqc.html; \
+    echo "cat" > output/fastqc/127811_CGAATACG-TTACCGAC_S1.R1.fastqc.html;
     """
