@@ -23,7 +23,7 @@ import glob
 
 # samples/read names
 READS = ["1", "2"]
-SAMPLES = [os.path.basename(fname).split('_')[0] for fname in glob.glob('FQ/*fastq.gz')]
+SAMPLES = [os.path.basename(fname).split('_')[0] for fname in glob.glob('data/FQ/*fastq.gz')]
 ## samples, = glob_wildcards("data/sample_{sample}.txt")
 
 ##############################################################
