@@ -32,7 +32,7 @@ SAMPLES = [os.path.basename(fname).split('_')[0] for fname in glob.glob('FQ/*fas
 
 DIRS = ['fastqc/', 'log/']
 #FQC = expand("fastqc/{sample}.R{read}_val_{read}_fastqc.html", sample=SAMPLES, read=READS)
-FQC = data/TESTING.txt
+FQC = "data/TESTING.txt"
 
 #127811_CGAATACG-TTACCGAC_S1_R1_001.fastq.gz
 
