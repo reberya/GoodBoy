@@ -30,7 +30,7 @@ SAMPLES = [os.path.basename(fname).split('_')[0] for fname in glob.glob('FQ/*fas
 # List of directories needed and end point files for analysis
 ##############################################################
 
-DIRS = ['fastqc/', 'log/']
+DIRS = [directory('fastqc/'), directory('log/')]
 #FQC = expand("fastqc/{sample}.R{read}_val_{read}_fastqc.html", sample=SAMPLES, read=READS)
 FQC = ["data/TESTING.txt"]
 
