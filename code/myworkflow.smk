@@ -53,7 +53,7 @@ rule fastqc:
         files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
     output:
         reads = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-    params: time="02:00:00", mem="4000m"
+    params: time="01:00:00", mem="1000m"
     threads: 2
     shell: """ \
     mkdir -p /home/rebernrj/testenv/output/fastqc; \
