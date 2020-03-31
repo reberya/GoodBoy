@@ -4,3 +4,6 @@ jobs: 4999
 immediate-submit: False
 verbose: true
 notemp: true
+latency-wait: 60
+rerun-incomplete: True
+verbose: true

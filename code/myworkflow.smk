@@ -10,7 +10,7 @@
 #                           - smk_env1
 #                           - fastQC
 #
-# RUN: snakemake -s code/myworkflow.smk --cores 1 
+# RUN: snakemake -s code/myworkflow.smk --cores 1
 ################################################################################
 
 from os.path import join
@@ -25,14 +25,14 @@ import numpy as np
 
 # samples/read names
 READS = ["1", "2"]
-SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('data/FQ/*.R1.fastq.gz')]
+SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('/home/rebernrj/testenv/data/FQ/*.R1.fastq.gz')]
 ## samples, = glob_wildcards("data/sample_{sample}.txt")
 
 ##############################################################
 # List of directories needed and end point files for analysis
 ##############################################################
 
-FQC = expand("output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
+FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
 
 
 #OLD: 127811_CGAATACG-TTACCGAC_S1_R1_001.fastq.gz
@@ -52,11 +52,11 @@ rule all:
 # FastQC
 rule fastqc:
     input:
-        files = expand("data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
+        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
     output:
-        reads = "output/fastqc/{sample}.R{read}_fastqc.html",
-    params: time= "01:00:00"
+        reads = "/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html",
+    params: time="02:00:00", mem="4000m", nodes=2
     shell: """ \
-    mkdir -p output/fastqc; \
-    fastqc -o output/fastqc/ {input.files} \
+    mkdir -p /home/rebernrj/testenv/output/fastqc; \
+    fastqc -o /home/rebernrj/testenv/output/fastqc/ {input.files} \
     """

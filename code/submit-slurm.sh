@@ -37,4 +37,5 @@
 #### where to write log files
 
 #SBATCH --output=log/hpc/slurm-%j_%x.out
-snakemake --profile config/slurm --latency-wait 30 -s code/myworkflow.smk
+mkdir -p logs/hpc
+snakemake --profile config/slurm -s code/myworkflow.smk
