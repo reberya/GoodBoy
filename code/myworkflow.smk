@@ -54,10 +54,9 @@ rule fastqc:
     input:
         reads = "data/FQ/{sample}.R{read}.fastq.gz"
     output:
-        reads = "output/fastqc/{sample}.R{read}.fastqc.html"
+        reads = "output/fastqc/{sample}.R1.fastqc.html"
     params: time= "01:00:00"
     shell: """ \
     mkdir -p output/fastqc; \
-    echo "cat" > output/fastqc/127811_CGAATACG-TTACCGAC_S1.R1.fastqc.html; \
-    echo "cat" > output/fastqc/127811_CGAATACG-TTACCGAC_S1.R2.fastqc.html;
+    fastqc -o output/fastqc {input.reads} \
     """
