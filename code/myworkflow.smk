@@ -10,6 +10,7 @@
 #                           - smk_env1
 #                           - fastQC
 #
+# RUN: snakemake -s code/myworkflow.smk --cores 1 
 ################################################################################
 
 from os.path import join
@@ -31,7 +32,7 @@ SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('data/FQ
 # List of directories needed and end point files for analysis
 ##############################################################
 
-FQC = expand("output/fastqc/{sample}.R{read}.fastqc.html", sample=SAMPLES, read=READS)
+FQC = expand("output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
 
 
 #OLD: 127811_CGAATACG-TTACCGAC_S1_R1_001.fastq.gz
@@ -51,11 +52,11 @@ rule all:
 # FastQC
 rule fastqc:
     input:
-        reads = "data/FQ/{sample}.R{read}.fastq.gz"
+        files = expand("data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
     output:
-        reads = "output/fastqc/{sample}.R{read}.fastqc.html",
+        reads = "output/fastqc/{sample}.R{read}_fastqc.html",
     params: time= "01:00:00"
     shell: """ \
     mkdir -p output/fastqc; \
-    fastqc -o output/fastqc {input.reads} \
+    fastqc -o output/fastqc/ {input.files} \
     """
