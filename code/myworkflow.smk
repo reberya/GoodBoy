@@ -44,8 +44,7 @@ FQC = expand("output/fastqc/{sample}.R{read}.fastqc.html", sample=SAMPLES, read=
 
 # end files required
 rule all:
-    input:
-        FQC
+    input: FQC
     params: time="10:00:00"
 
 
@@ -54,7 +53,7 @@ rule fastqc:
     input:
         reads = "data/FQ/{sample}.R{read}.fastq.gz"
     output:
-        reads = "output/fastqc/{sample}.R1.fastqc.html"
+        reads = "output/fastqc/{sample}.R{read}.fastqc.html",
     params: time= "01:00:00"
     shell: """ \
     mkdir -p output/fastqc; \
