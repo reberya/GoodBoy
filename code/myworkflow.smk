@@ -52,10 +52,11 @@ rule all:
 # FastQC
 rule fastqc:
     input:
-        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
+        files = np.unique(expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS))
     output:
         reads = "/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html",
-    params: time="02:00:00", mem="4000m", nodes=2
+    params: time="02:00:00", mem="4000m"
+    threads: 2
     shell: """ \
     mkdir -p /home/rebernrj/testenv/output/fastqc; \
     fastqc -o /home/rebernrj/testenv/output/fastqc/ {input.files} \
