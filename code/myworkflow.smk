@@ -10,7 +10,7 @@
 #                           - smk_env1
 #                           - fastQC
 #
-# RUN: snakemake -s code/myworkflow.smk --cores 1
+# RUN: snakemake -s code/myworkflow.smk --cores 1 --latency-wait 30
 ################################################################################
 
 from os.path import join
@@ -35,8 +35,6 @@ SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('/home/r
 FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
 
 
-#OLD: 127811_CGAATACG-TTACCGAC_S1_R1_001.fastq.gz
-#NEW: 127811_CGAATACG-TTACCGAC_S1.R1.fastq.gz
 
 ##############################################################
 # Rules
@@ -46,15 +44,15 @@ FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html"
 # end files required
 rule all:
     input: FQC
-    params: time="10:00:00"
+    params: time="10:00:00", mem="50m"
 
 
 # FastQC
 rule fastqc:
     input:
-        files = np.unique(expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS))
+        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
     output:
-        reads = "/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html",
+        reads = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
     params: time="02:00:00", mem="4000m"
     threads: 2
     shell: """ \

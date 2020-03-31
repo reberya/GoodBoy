@@ -6,7 +6,7 @@
 #### #### ####  These are the most frequently changing options
 
 ####  Job name
-#SBATCH --job-name=mwe
+#SBATCH --job-name=Goodboy
 
 ####  Request resources here
 ####    These are typically, number of processors, amount of memory,
@@ -16,7 +16,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=50m
+#SBATCH --mem-per-cpu=25m
 #SBATCH --time=10:00
 
 
@@ -37,5 +37,5 @@
 #### where to write log files
 
 #SBATCH --output=log/hpc/slurm-%j_%x.out
-mkdir -p logs/hpc
+mkdir -p log/hpc
 snakemake --profile config/slurm -s code/myworkflow.smk
