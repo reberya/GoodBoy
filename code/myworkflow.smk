@@ -11,6 +11,8 @@
 #                           - python3.7-anaconda/2019.07
 #                           - smk_env1
 #                           - fastQC
+#                           - STAR
+#                           - subread
 #
 # RUN: snakemake -s code/myworkflow.smk --cores 1 --latency-wait 30
 ################################################################################
@@ -18,8 +20,14 @@
 from os.path import join
 import os
 import glob
-import numpy as np
 
+
+##############################################################
+# User Modifiables
+##############################################################
+
+# working directory
+DATA_DIR = "/home/rebernrj/testenv/"
 
 ##############################################################
 # Globals
@@ -27,19 +35,24 @@ import numpy as np
 
 # samples/read names
 READS = ["1", "2"]
-SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('/home/rebernrj/testenv/data/FQ/*.R1.fastq.gz')]
-GENOME_DIR = "/home/rebernrj/testenv/genome/GRCm38_vM21/"
-STAR_DIR = "/home/rebernrj/testenv/output/star/"
-FEATURECOUNTS_DIR = "/home/rebernrj/testenv/output/featureCounts/"
+SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob(DATA_DIR + 'data/FQ/*.R1.fastq.gz')]
+
+# directories
+GENOME_DIR = DATA_DIR + "genome/GRCm38_vM21/"
+FQC_DIR = DATA_DIR + "output/fastqc/"
+STAR_DIR = DATA_DIR + "output/star/"
+FEATURECOUNTS_DIR = DATA_DIR + "output/featureCounts/"
+
 
 ##############################################################
-# List of directories needed and end point files for analysis
+# List of end point files needed
 ##############################################################
 
-FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-GENOME = ["/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"]
-ALIGNED = expand("/home/rebernrj/testenv/output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+FQC = expand(DATA_DIR + "output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
+GENOME = [DATA_DIR + "genome/GRCm38_vM21/genomeParameters.txt"]
+ALIGNED = expand(DATA_DIR + "output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
 FC = [FEATURECOUNTS_DIR + "counts.txt"]
+
 
 ##############################################################
 # Rules
@@ -55,49 +68,52 @@ rule all:
 # FastQC
 rule fastqc:
     input:
-        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
-    output:
-        reads = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-    params: time="01:00:00", mem="1000m"
+        files = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
+    output: FQC
+    params: time = "01:00:00", mem = "1000m",
+        fqc = FQC_DIR
     threads: 2
     shell: """ \
-    mkdir -p /home/rebernrj/testenv/output/fastqc; \
-    fastqc -o /home/rebernrj/testenv/output/fastqc/ {input.files} \
+    mkdir -p {params.fqc}; \
+    fastqc -o {params.fqc} {input.files} \
     """
+
 
 # STAR genome index
 rule starGenomeIndex:
     input:
         gd = GENOME_DIR
     output:
-        index = "/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"
-    params: time="10:00:00", mem="8000m", readLength="51"
+        index = GENOME_DIR + "/genomeParameters.txt"
+    params: time="10:00:00", mem ="8000m", readLength="51",
+        genome = GENOME_DIR
     threads: 6
     shell:
         """
         STAR --runThreadN {threads} \
         --runMode genomeGenerate \
         --genomeDir {input.gd} \
-        --genomeFastaFiles /home/rebernrj/testenv/genome/GRCm38_vM21/GRCm38.primary_assembly.genome.fa \
-        --sjdbGTFfile /home/rebernrj/testenv/genome/GRCm38_vM21/gencode.vM21.annotation.gtf \
+        --genomeFastaFiles {params.genome}GRCm38.primary_assembly.genome.fa \
+        --sjdbGTFfile {params.genome}gencode.vM21.annotation.gtf \
         --sjdbOverhang {params.readLength}; \
         mv Log.out log/hpc/
         """
 
+
 #STAR aligner
 rule star:
     input:
-        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
-        index = "/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"
-    output:
-        bam = expand("/home/rebernrj/testenv/output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
-    params: time="10:00:00", mem="6000m",
-        ext = expand("/home/rebernrj/testenv/output/star/{sample}_", sample=SAMPLES),
-        gd = GENOME_DIR
+        files = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
+        index = GENOME_DIR + "genomeParameters.txt"
+    output: ALIGNED
+    params: time="10:00:00", mem ="6000m",
+        ext = expand(DATA_DIR + "output/star/{sample}_", sample=SAMPLES),
+        gd = GENOME_DIR,
+        star = STAR_DIR
     threads: 6
     shell:
         """
-        mkdir -p /home/rebernrj/testenv/output/star; \
+        mkdir -p {params.star}; \
         STAR \
         --genomeDir {params.gd} \
         --runThreadN {threads} \
@@ -109,11 +125,12 @@ rule star:
         --outSAMattributes Standard
         """
 
+
 # Feature counts
 rule featureCounts:
     input:
         bam = ALIGNED,
-        gtf = "/home/rebernrj/testenv/genome/GRCm38_vM21/gencode.vM21.annotation.gtf"
+        gtf = GENOME_DIR + "gencode.vM21.annotation.gtf"
     output: FC
     params: time="10:00:00", mem="6000m",
         fc = FEATURECOUNTS_DIR,
