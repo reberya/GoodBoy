@@ -4,6 +4,8 @@
 # DATE LAST MODIFIED:       03/30/2020
 #
 # FUNCTION:                 FastQC
+#                           STAR alignment
+#
 #
 # USES:
 #                           - python3.7-anaconda/2019.07
@@ -26,14 +28,14 @@ import numpy as np
 # samples/read names
 READS = ["1", "2"]
 SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('/home/rebernrj/testenv/data/FQ/*.R1.fastq.gz')]
-## samples, = glob_wildcards("data/sample_{sample}.txt")
+GENOMEDIR = "/home/rebernrj/testenv/genome/GRCm38_vM21/"
 
 ##############################################################
 # List of directories needed and end point files for analysis
 ##############################################################
 
 FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-
+GENOME = ['/home/rebernrj/testenv/genome/SA']
 
 
 ##############################################################
@@ -43,7 +45,7 @@ FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html"
 
 # end files required
 rule all:
-    input: FQC
+    input: FQC + GENOME
     params: time="10:00:00", mem="50m"
 
 
@@ -59,3 +61,44 @@ rule fastqc:
     mkdir -p /home/rebernrj/testenv/output/fastqc; \
     fastqc -o /home/rebernrj/testenv/output/fastqc/ {input.files} \
     """
+
+# STAR genome index
+rule starGenomeIndex:
+    input:
+        gd = GENOMEDIR
+    output:
+        hold = '/home/rebernrj/testenv/genome/SA'
+    params: time="10:00:00", mem="8000m", readLength="51"
+    threads: 6
+    shell:
+        """
+        STAR --runThreadN {threads} \
+        --runMode genomeGenerate \
+        --genomeDir {input.gd} \
+        --genomeFastaFiles /home/rebernrj/testenv/genome/GRCm38_vM21/GRCm38.primary_assembly.genome.fa \
+        --sjdbGTFfile /home/rebernrj/testenv/genome/GRCm38_vM21/gencode.vM21.annotation.gtf \
+        --sjdbOverhang {params.readLength}; \
+        mv Log.out log/hpc/
+        """
+
+#STAR aligner
+rule star:
+    input:
+        files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
+        gd = GENOMEDIR
+    output:
+    params: time="10:00:00", mem="6000m"
+    threads: 6
+    shell:
+        """
+        mkdir -p /home/rebernrj/testenv/data/star; \
+        STAR \
+        --genomeDir {input.gd} \
+        --runThreadN {threads} \
+        --readFilesIn {input.files} \
+        --readFilesCommand gunzip -c \
+        --outFileNamePrefix /home/rebernrj/testenv/data/star/ \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped Within \
+        --outSAMattributes Standard
+        """
