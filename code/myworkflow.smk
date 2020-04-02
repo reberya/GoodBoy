@@ -35,7 +35,8 @@ GENOMEDIR = "/home/rebernrj/testenv/genome/GRCm38_vM21/"
 ##############################################################
 
 FQC = expand("/home/rebernrj/testenv/output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-GENOME = ['/home/rebernrj/testenv/genome/SA']
+GENOME = ["/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"]
+ALIGNED = expand("/home/rebernrj/testenv/output/star/{sample}/Aligned.sortedByCoord.out.bam", sample=SAMPLES)
 
 
 ##############################################################
@@ -45,7 +46,7 @@ GENOME = ['/home/rebernrj/testenv/genome/SA']
 
 # end files required
 rule all:
-    input: FQC + GENOME
+    input: FQC + GENOME + ALIGNED
     params: time="10:00:00", mem="50m"
 
 
@@ -67,7 +68,7 @@ rule starGenomeIndex:
     input:
         gd = GENOMEDIR
     output:
-        hold = '/home/rebernrj/testenv/genome/SA'
+        index = "/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"
     params: time="10:00:00", mem="8000m", readLength="51"
     threads: 6
     shell:
@@ -85,19 +86,21 @@ rule starGenomeIndex:
 rule star:
     input:
         files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
-        gd = GENOMEDIR
+        gd = GENOMEDIR,
+        index = "/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"
     output:
-    params: time="10:00:00", mem="6000m"
+        bam = expand("/home/rebernrj/testenv/output/star/{sample}/Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+    params: time="10:00:00", mem="6000m", ext = expand("/home/rebernrj/testenv/output/star/{sample}/", sample=SAMPLES)
     threads: 6
     shell:
         """
-        mkdir -p /home/rebernrj/testenv/data/star; \
+        mkdir -p /home/rebernrj/testenv/output/star; \
         STAR \
         --genomeDir {input.gd} \
         --runThreadN {threads} \
         --readFilesIn {input.files} \
         --readFilesCommand gunzip -c \
-        --outFileNamePrefix /home/rebernrj/testenv/data/star/ \
+        --outFileNamePrefix {params.ext} \
         --outSAMtype BAM SortedByCoordinate \
         --outSAMunmapped Within \
         --outSAMattributes Standard
