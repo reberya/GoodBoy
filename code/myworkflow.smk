@@ -30,7 +30,7 @@ READS = ["1", "2"]
 SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob('/home/rebernrj/testenv/data/FQ/*.R1.fastq.gz')]
 GENOME_DIR = "/home/rebernrj/testenv/genome/GRCm38_vM21/"
 STAR_DIR = "/home/rebernrj/testenv/output/star/"
-FEATURECOUNTS_DIR = "/home/rebernrj/testenv/output/FeatureCounts/"
+FEATURECOUNTS_DIR = "/home/rebernrj/testenv/output/featureCounts/"
 
 ##############################################################
 # List of directories needed and end point files for analysis
@@ -88,18 +88,18 @@ rule starGenomeIndex:
 rule star:
     input:
         files = expand("/home/rebernrj/testenv/data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
-        gd = GENOME_DIR,
         index = "/home/rebernrj/testenv/genome/GRCm38_vM21/genomeParameters.txt"
     output:
-        bam = expand("/home/rebernrj/testenv/output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES),
-        dir = STAR_DIR
-    params: time="10:00:00", mem="6000m", ext = expand("/home/rebernrj/testenv/output/star/{sample}_", sample=SAMPLES)
+        bam = expand("/home/rebernrj/testenv/output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
+    params: time="10:00:00", mem="6000m",
+        ext = expand("/home/rebernrj/testenv/output/star/{sample}_", sample=SAMPLES),
+        gd = GENOME_DIR
     threads: 6
     shell:
         """
         mkdir -p /home/rebernrj/testenv/output/star; \
         STAR \
-        --genomeDir {input.gd} \
+        --genomeDir {params.gd} \
         --runThreadN {threads} \
         --readFilesIn {input.files} \
         --readFilesCommand gunzip -c \
@@ -112,16 +112,17 @@ rule star:
 # Feature counts
 rule featureCounts:
     input:
-        dir = STAR_DIR,
-        gtf = GENOME_DIR + "*.gtf"
+        bam = ALIGNED,
+        gtf = "/home/rebernrj/testenv/genome/GRCm38_vM21/gencode.vM21.annotation.gtf"
     output: FC
-    params: time="10:00:00", mem="6000m", dir = FEATURECOUNTS_DIR
-    threads:
+    params: time="10:00:00", mem="6000m",
+        fc = FEATURECOUNTS_DIR,
+        star = STAR_DIR
+    threads: 2
     shell:
-    """
-    mkdir -p /home/rebernrj/testenv/output/featureCounts; \
-    featureCounts -p -t exon -g gene_id \
-    -a {input.gtf} \
-    -o {output.dir}/counts.txt \
-    {input.dir}*Aligned.sortedByCoord.out.bam
-    """
+        """
+        featureCounts -p -t exon -g gene_id \
+        -a {input.gtf} \
+        -o {params.fc}/counts.txt \
+        {params.star}*Aligned.sortedByCoord.out.bam
+        """
