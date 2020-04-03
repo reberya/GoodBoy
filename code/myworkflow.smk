@@ -29,10 +29,11 @@ import glob
 # User Modifiables
 ##############################################################
 
-# working directory
+# working directories
 DATA_DIR = "/home/rebernrj/testenv/"
 CONFIG_DIR = "/home/rebernrj/GoodBoy/config/python_config/"
 LOG_DIR = "/home/rebernrj/GoodBoy/log/hpc/"
+
 
 ##############################################################
 # Globals
@@ -41,6 +42,9 @@ LOG_DIR = "/home/rebernrj/GoodBoy/log/hpc/"
 # samples/read names
 READS = ["1", "2"]
 SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob(DATA_DIR + 'data/FQ/*.R1.fastq.gz')]
+
+# FASTQ files
+FQ = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
 
 # directories
 GENOME_DIR = DATA_DIR + "genome/GRCm38_vM21/"
@@ -82,15 +86,14 @@ rule all:
 
 # FastQC
 rule fastqc:
-    input:
-        files = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
+    input: FQ
     output: FQC
     params: time = "01:00:00", mem = "1000m",
         fqc = FQC_DIR
     threads: 2
     shell: """ \
     mkdir -p {params.fqc}; \
-    fastqc -o {params.fqc} {input.files} \
+    fastqc -o {params.fqc} {input} \
     """
 
 
@@ -99,7 +102,7 @@ rule starGenomeIndex:
     input:
         gd = GENOME_DIR
     output:
-        index = GENOME_DIR + "/genomeParameters.txt"
+        index = GENOME
     params: time="10:00:00", mem ="8000m", readLength="51",
         genome = GENOME_DIR
     threads: 6
@@ -118,8 +121,8 @@ rule starGenomeIndex:
 #STAR aligner
 rule star:
     input:
-        files = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS),
-        index = GENOME_DIR + "genomeParameters.txt"
+        files = FQ,
+        index = GENOME
     output: ALIGNED
     params: time="10:00:00", mem ="6000m",
         ext = expand(DATA_DIR + "output/star/{sample}_", sample=SAMPLES),
