@@ -37,5 +37,6 @@
 #### where to write log files
 
 #SBATCH --output=log/hpc/slurm-%j_%x.out
+
 mkdir -p log/hpc
-snakemake --profile config/slurm -s code/myworkflow.smk
+snakemake --profile config/slurm -s code/myworkflow.smk --use-conda

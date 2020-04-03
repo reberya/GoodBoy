@@ -1,18 +1,21 @@
 ################################################################################
 # TITLE:                    2020 RNAseq pipeline
 # AUTHOR:                   Ryan Rebernick
-# DATE LAST MODIFIED:       03/30/2020
+# DATE LAST MODIFIED:       04/03/2020
 #
 # FUNCTION:                 FastQC
 #                           STAR alignment
-#
+#                           FeatureCounts (subread)
+#                           MultiQC
 #
 # USES:
 #                           - python3.7-anaconda/2019.07
-#                           - smk_env1
+#                           - config/python_env/smk_env1.yaml
 #                           - fastQC
 #                           - STAR
 #                           - subread
+#                           - multiqc
+#                           - config/python_env/multiqc_env1.yaml
 #
 # RUN: snakemake -s code/myworkflow.smk --cores 1 --latency-wait 30
 ################################################################################
@@ -20,7 +23,6 @@
 from os.path import join
 import os
 import glob
-import multiqc
 
 
 ##############################################################
@@ -29,6 +31,8 @@ import multiqc
 
 # working directory
 DATA_DIR = "/home/rebernrj/testenv/"
+CONFIG_DIR = "/home/rebernrj/GoodBoy/config/python_config/"
+LOG_DIR = "/home/rebernrj/GoodBoy/log/hpc/"
 
 ##############################################################
 # Globals
@@ -44,6 +48,8 @@ FQC_DIR = DATA_DIR + "output/fastqc/"
 STAR_DIR = DATA_DIR + "output/star/"
 FEATURECOUNTS_DIR = DATA_DIR + "output/featureCounts/"
 MULTIQC_DIR = DATA_DIR + "output/multiqc/"
+NEW_LOG_DIR = DATA_DIR + "output/logs/"
+
 
 
 ##############################################################
@@ -64,7 +70,14 @@ MULTIQC = [MULTIQC_DIR + "multiqc_report.html"]
 # end files required
 rule all:
     input: FQC + GENOME + ALIGNED + FC + MULTIQC
-    params: time="10:00:00", mem="50m"
+    params: time="10:00:00", mem="50m",
+        logDir = LOG_DIR,
+        newLogDir = NEW_LOG_DIR
+    shell:
+        """
+        mkdir -p {params.newLogDir}
+        mv {params.logDir}* {params.newLogDir}
+        """
 
 
 # FastQC
@@ -146,6 +159,7 @@ rule featureCounts:
         {params.star}*Aligned.sortedByCoord.out.bam
         """
 
+
 # multiqc
 rule multiqc:
     input: FQC + GENOME + ALIGNED + FC
@@ -154,9 +168,9 @@ rule multiqc:
         outDir = MULTIQC_DIR,
         searchDir = DATA_DIR
     threads: 1
+    conda: CONFIG_DIR + "multiqc_env1.yaml"
     shell:
         """
-        source activate multiqc_env1; \
         multiqc -o {params.outDir} \
         {params.searchDir}
         """
