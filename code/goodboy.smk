@@ -31,8 +31,8 @@ import glob
 
 # working directories
 DATA_DIR = "/home/rebernrj/testenv/"
-CONFIG_DIR = "/home/rebernrj/GoodBoy/config/python_config/"
-LOG_DIR = "/home/rebernrj/GoodBoy/log/hpc/"
+GOODBOY_DIR = "/home/rebernrj/GoodBoy/"
+GENOME_DIR = "/home/rebernrj/testenv/genome/GRCm38_vM24"
 
 
 ##############################################################
@@ -41,18 +41,19 @@ LOG_DIR = "/home/rebernrj/GoodBoy/log/hpc/"
 
 # samples/read names
 READS = ["1", "2"]
-SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob(DATA_DIR + 'data/FQ/*.R1.fastq.gz')]
+SAMPLES = [os.path.basename(fname).split('.')[0] for fname in glob.glob(DATA_DIR + 'FQ/*.R1.fastq.gz')]
 
 # FASTQ files
-FQ = expand(DATA_DIR + "data/FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
+FQ = expand(DATA_DIR + "FQ/{sample}.R{read}.fastq.gz", sample=SAMPLES, read=READS)
 
 # directories
-GENOME_DIR = DATA_DIR + "genome/GRCm38_vM21/"
 FQC_DIR = DATA_DIR + "output/fastqc/"
 STAR_DIR = DATA_DIR + "output/star/"
 FEATURECOUNTS_DIR = DATA_DIR + "output/featureCounts/"
 MULTIQC_DIR = DATA_DIR + "output/multiqc/"
 NEW_LOG_DIR = DATA_DIR + "output/logs/"
+CONFIG_DIR = GOODBOY_DIR + "config/python_config/"
+LOG_DIR = GOODBOY_DIR + "log/hpc/"
 
 
 
@@ -111,8 +112,8 @@ rule starGenomeIndex:
         STAR --runThreadN {threads} \
         --runMode genomeGenerate \
         --genomeDir {input.gd} \
-        --genomeFastaFiles {params.genome}GRCm38.primary_assembly.genome.fa \
-        --sjdbGTFfile {params.genome}gencode.vM21.annotation.gtf \
+        --genomeFastaFiles {params.genome}*.fa \
+        --sjdbGTFfile {params.genome}*.gtf \
         --sjdbOverhang {params.readLength}; \
         mv Log.out log/hpc/
         """
