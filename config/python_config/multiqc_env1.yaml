@@ -1,0 +1,5 @@
+name: multiqc_env1
+channels:
+  - defaults
+prefix: /home/rebernrj/.conda/envs/multiqc_env1
+
