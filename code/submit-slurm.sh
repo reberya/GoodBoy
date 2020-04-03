@@ -39,4 +39,4 @@
 #SBATCH --output=log/hpc/slurm-%j_%x.out
 
 mkdir -p log/hpc
-snakemake --profile config/slurm -s code/myworkflow.smk --use-conda
+snakemake --profile config/slurm -s code/goodboy.smk --use-conda

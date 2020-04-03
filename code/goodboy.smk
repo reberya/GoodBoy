@@ -1,5 +1,5 @@
 ################################################################################
-# TITLE:                    2020 RNAseq pipeline
+# TITLE:                    2020 RNAseq pipeline (Goodboy)
 # AUTHOR:                   Ryan Rebernick
 # DATE LAST MODIFIED:       04/03/2020
 #
