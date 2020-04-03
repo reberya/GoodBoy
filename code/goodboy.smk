@@ -32,7 +32,7 @@ import glob
 # working directories
 DATA_DIR = "/home/rebernrj/testenv/"
 GOODBOY_DIR = "/home/rebernrj/GoodBoy/"
-GENOME_DIR = "/home/rebernrj/testenv/genome/GRCm38_vM24"
+GENOME_DIR = "/home/rebernrj/testenv/genome/GRCm38_vM24/"
 
 
 ##############################################################
@@ -62,7 +62,7 @@ LOG_DIR = GOODBOY_DIR + "log/hpc/"
 ##############################################################
 
 FQC = expand(DATA_DIR + "output/fastqc/{sample}.R{read}_fastqc.html", sample=SAMPLES, read=READS)
-GENOME = [DATA_DIR + "genome/GRCm38_vM21/genomeParameters.txt"]
+GENOME = [GENOME_DIR + "genomeParameters.txt"]
 ALIGNED = expand(DATA_DIR + "output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
 FC = [FEATURECOUNTS_DIR + "counts.txt"]
 MULTIQC = [MULTIQC_DIR + "multiqc_report.html"]
@@ -105,15 +105,15 @@ rule starGenomeIndex:
     output:
         index = GENOME
     params: time="10:00:00", mem ="8000m", readLength="51",
-        genome = GENOME_DIR
+        gd = GENOME_DIR
     threads: 6
     shell:
         """
         STAR --runThreadN {threads} \
         --runMode genomeGenerate \
         --genomeDir {input.gd} \
-        --genomeFastaFiles {params.genome}*.fa \
-        --sjdbGTFfile {params.genome}*.gtf \
+        --genomeFastaFiles {params.gd}*.fa \
+        --sjdbGTFfile {params.gd}*.gtf \
         --sjdbOverhang {params.readLength}; \
         mv Log.out log/hpc/
         """
@@ -149,7 +149,7 @@ rule star:
 rule featureCounts:
     input:
         bam = ALIGNED,
-        gtf = GENOME_DIR + "gencode.vM21.annotation.gtf"
+        gd = GENOME_DIR
     output: FC
     params: time="10:00:00", mem="6000m",
         fc = FEATURECOUNTS_DIR,
@@ -158,7 +158,7 @@ rule featureCounts:
     shell:
         """
         featureCounts -p -t exon -g gene_id \
-        -a {input.gtf} \
+        -a {input.gd}*.gtf \
         -o {params.fc}/counts.txt \
         {params.star}*Aligned.sortedByCoord.out.bam
         """
