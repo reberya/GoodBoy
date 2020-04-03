@@ -76,6 +76,13 @@ Get required files
 wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M24/gencode.vM24.annotation.gtf.gz
 wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M24/GRCm38.primary_assembly.genome.fa.gz
 ```
+Unzip files
+```
+gunzip gencode.vM24.annotation.gtf.gz
+gunzip GRCm38.primary_assembly.genome.fa.gz
+```
+
+
 
 ### Data organization
 In order for Goodboy to run without error on the availible fastq files, the folders containing your data must be structured appropriately. Appropriate structure consists of a single folder 'FQ' which contains your .fastq.gz files in the following format: <SAMPLE>.R<#>.fastq.gz where SAMPLE is your sample name and # is the read number [1,2]. Example file names would be:
