@@ -20,6 +20,7 @@
 from os.path import join
 import os
 import glob
+import multiqc
 
 
 ##############################################################
@@ -42,6 +43,7 @@ GENOME_DIR = DATA_DIR + "genome/GRCm38_vM21/"
 FQC_DIR = DATA_DIR + "output/fastqc/"
 STAR_DIR = DATA_DIR + "output/star/"
 FEATURECOUNTS_DIR = DATA_DIR + "output/featureCounts/"
+MULTIQC_DIR = DATA_DIR + "output/multiqc/"
 
 
 ##############################################################
@@ -52,16 +54,16 @@ FQC = expand(DATA_DIR + "output/fastqc/{sample}.R{read}_fastqc.html", sample=SAM
 GENOME = [DATA_DIR + "genome/GRCm38_vM21/genomeParameters.txt"]
 ALIGNED = expand(DATA_DIR + "output/star/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES)
 FC = [FEATURECOUNTS_DIR + "counts.txt"]
+MULTIQC = [MULTIQC_DIR + "multiqc_report.html"]
 
 
 ##############################################################
 # Rules
 ##############################################################
 
-
 # end files required
 rule all:
-    input: FQC + GENOME + ALIGNED + FC
+    input: FQC + GENOME + ALIGNED + FC + MULTIQC
     params: time="10:00:00", mem="50m"
 
 
@@ -142,4 +144,19 @@ rule featureCounts:
         -a {input.gtf} \
         -o {params.fc}/counts.txt \
         {params.star}*Aligned.sortedByCoord.out.bam
+        """
+
+# multiqc
+rule multiqc:
+    input: FQC + GENOME + ALIGNED + FC
+    output: MULTIQC
+    params: time="2:00:00", mem="1000m",
+        outDir = MULTIQC_DIR,
+        searchDir = DATA_DIR
+    threads: 1
+    shell:
+        """
+        source activate multiqc_env1; \
+        multiqc -o {params.outDir} \
+        {params.searchDir}
         """
